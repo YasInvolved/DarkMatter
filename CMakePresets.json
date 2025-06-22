@@ -1,0 +1,45 @@
+{
+    "version": 9,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 31,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "conf-vs-msvc",
+            "displayName": "Visual Studio Generator, MSVC",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/vs-msvc"
+        },
+        {
+            "name": "conf-vs-clang",
+            "displayName": "Visual Studio Generator, ClangCL",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/vs-clang"
+        },
+        {
+            "name": "conf-ninja",
+            "displayName": "Ninja Generator",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/ninja"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "build-vs-msvc",
+            "displayName": "[BUILD] Visual Studio Generator, MSVC",
+            "configurePreset": "conf-vs-msvc"
+        },
+        {
+            "name": "build-vs-clang",
+            "displayName": "[BUILD] Visual Studio Generator, ClangCL",
+            "configurePreset": "conf-vs-clang"
+        },
+        {
+            "name": "build-ninja",
+            "displayName": "[BUILD] Ninja Generator",
+            "configurePreset": "conf-ninja"
+        }
+    ]
+}
