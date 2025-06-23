@@ -35,6 +35,9 @@ jobs:
         steps:
             - uses: actions/checkout@v4
            
+            - name: Create Build Directory
+              run: cmake -E make_directory build
+
             - name: Configure CMake
               run: cmake --build --preset ${{ matrix.preset }}
 
