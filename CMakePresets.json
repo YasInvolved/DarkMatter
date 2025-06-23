@@ -5,41 +5,95 @@
         "minor": 31,
         "patch": 0
     },
-    "configurePresets": [
-        {
-            "name": "conf-vs-msvc",
-            "displayName": "Visual Studio Generator, MSVC",
-            "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build/vs-msvc"
-        },
-        {
-            "name": "conf-vs-clang",
-            "displayName": "Visual Studio Generator, ClangCL",
-            "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build/vs-clang"
-        },
-        {
-            "name": "conf-ninja",
-            "displayName": "Ninja Generator",
-            "generator": "Ninja Multi-Config",
-            "binaryDir": "${sourceDir}/build/ninja"
-        }
-    ],
-    "buildPresets": [
-        {
-            "name": "build-vs-msvc",
-            "displayName": "[BUILD] Visual Studio Generator, MSVC",
-            "configurePreset": "conf-vs-msvc"
-        },
-        {
-            "name": "build-vs-clang",
-            "displayName": "[BUILD] Visual Studio Generator, ClangCL",
-            "configurePreset": "conf-vs-clang"
-        },
-        {
-            "name": "build-ninja",
-            "displayName": "[BUILD] Ninja Generator",
-            "configurePreset": "conf-ninja"
-        }
-    ]
+  "configurePresets": [
+    {
+      "name": "ci-windows-base",
+      "hidden": true,
+      "condition": {
+        "type": "allOf",
+        "conditions": [
+          {
+            "type": "equals",
+            "lhs": "${hostSystemName}",
+            "rhs": "Windows"
+          },
+          {
+            "type": "equals",
+            "lhs": "$env{DM_CI_MODE}",
+            "rhs": "ON"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ci-conf-msvc",
+      "hidden": true,
+      "inherits": "ci-windows-base",
+      "generator": "Ninja Multi-Config",
+      "toolchainFile": "${sourceDir}/ci/toolchains/msvc-toolchain.cmake"
+    },
+    {
+      "name": "ci-conf-clangcl",
+      "hidden": true,
+      "inherits": "ci-windows-base",
+      "generator": "Ninja Multi-Config",
+      "toolchainFile": "${sourceDir}/ci/toolchains/clangcl-toolchain.cmake"
+    },
+    {
+      "name": "conf-vs-msvc",
+      "displayName": "Visual Studio Generator, MSVC",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build/vs-msvc"
+    },
+    {
+      "name": "conf-vs-clang",
+      "displayName": "Visual Studio Generator, ClangCL",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build/vs-clang"
+    },
+    {
+      "name": "conf-ninja",
+      "displayName": "Ninja Generator",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/build/ninja"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-windows-base",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "ci-build-msvc",
+      "configurePreset": "ci-conf-msvc",
+      "inheritConfigureEnvironment": true,
+      "inherits": "build-windows-base"
+    },
+    {
+      "name": "ci-build-clangcl",
+      "configurePreset": "ci-conf-clangcl",
+      "inheritConfigureEnvironment": true,
+      "inherits": "build-windows-base"
+    },
+    {
+      "name": "build-vs-msvc",
+      "displayName": "[BUILD] Visual Studio Generator, MSVC",
+      "configurePreset": "conf-vs-msvc"
+    },
+    {
+      "name": "build-vs-clang",
+      "displayName": "[BUILD] Visual Studio Generator, ClangCL",
+      "configurePreset": "conf-vs-clang"
+    },
+    {
+      "name": "build-ninja",
+      "displayName": "[BUILD] Ninja Generator",
+      "configurePreset": "conf-ninja"
+    }
+  ]
 }
