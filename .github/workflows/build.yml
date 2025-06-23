@@ -1,0 +1,45 @@
+name: Build Dark Matter
+
+on:
+    push:
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
+
+jobs:
+    build:
+        runs-on: ${{ matrix.os }}
+
+        strategy:
+            fail-fast: false
+
+            matrix:
+                os: [ubuntu-latest, windows-latest]
+                build_type: [Release]
+                preset: [build-vs-msvc, build-vs-clang, build-ninja]
+                include:
+                    - os: windows-latest
+                      preset: build-vs-msvc
+                    - os: windows-latest
+                      preset: build-vs-clang
+                    - os: ubuntu-latest
+                      preset: build-ninja
+                exclude:
+                    - os: windows-latest
+                      preset: build-ninja
+                    - os: ubuntu-latest
+                      preset: build-vs-msvc
+                    - os: ubuntu-latest
+                      preset: build-vs-clang
+
+        steps:
+            - uses: actions/checkout@v4
+           
+            - name: Configure CMake
+              run: cmake --build --preset ${{ matrix.preset }}
+
+            - name: Upload Artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                name: dark-matter-artifact-${{ github.sha }}
+                path: build/
