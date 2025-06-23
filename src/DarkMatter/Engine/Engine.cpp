@@ -36,7 +36,7 @@ void Engine::run()
 
 void Engine::shutdown()
 {
-
+   m_game->onShutdown();
 }
 
 void Engine::update()
