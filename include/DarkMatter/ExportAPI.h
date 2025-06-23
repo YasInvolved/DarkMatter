@@ -1,5 +1,5 @@
-#ifndef _DM_DEFINITIONS_H_INCLUDED_
-#define _DM_DEFINITIONS_H_INCLUDED_
+#ifndef _DM_EXPORT_API_H_INCLUDED_
+#define _DM_EXPORT_API_H_INCLUDED_
 
 #ifdef WIN32
    #ifdef DM_EXPORT_SYMBOLS
@@ -10,4 +10,5 @@
 #else
    #define DM_API
 #endif
+
 #endif
