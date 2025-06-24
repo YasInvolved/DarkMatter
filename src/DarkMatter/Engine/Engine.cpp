@@ -24,6 +24,9 @@ bool Engine::initialize()
       {
          // TODO: renderer resize callback and shit like that
          m_game->onEvent(event);
+
+         if (event.type == Events::EventType::QUIT)
+            m_running = false;
       }
    );
 
