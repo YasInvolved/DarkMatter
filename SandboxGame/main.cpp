@@ -1,4 +1,5 @@
 #include <DarkMatter/DarkMatter.h>
+#include <iostream>
 
 class Game : public DarkMatter::IGame
 {
@@ -28,7 +29,10 @@ public:
 
    void onEvent(const DarkMatter::Events::Event& event) override
    {
-      
+      if (event.type == DarkMatter::Events::EventType::KEY_DOWN)
+         std::cout << event.keyEvent.keyCode << " was pressed\n";
+      else if (event.type == DarkMatter::Events::EventType::KEY_UP)
+         std::cout << event.keyEvent.keyCode << " was released\n";
    }
 
    std::string getTitle() const override

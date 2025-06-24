@@ -5,7 +5,15 @@ set(DM_ENGINE_SOURCES
 	"Engine/Window.cpp"
 )
 
-add_library(DarkMatter SHARED ${DM_ENGINE_SOURCES} "pch.cpp")
+set(DM_RENDERER_SOURCES
+	 "Renderer/IRenderer.h"
+	 "Renderer/VulkanRenderer.h"
+	 "Renderer/VulkanRenderer.cpp"
+	 "Renderer/Renderer.h"
+     "Renderer/Renderer.cpp"
+)
+
+add_library(DarkMatter SHARED ${DM_ENGINE_SOURCES} ${DM_RENDERER_SOURCES} "pch.cpp")
 target_include_directories(DarkMatter 
 	PUBLIC "${DM_ROOT_PATH}/include"
 	PRIVATE "${DM_ROOT_PATH}/src"

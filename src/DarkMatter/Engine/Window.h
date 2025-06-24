@@ -19,7 +19,6 @@ namespace DarkMatter
 
       bool initialize();
       
-      // returns false if game should exit
       void handleEvents();
 
       void setEventCallback(EventCallback cb);

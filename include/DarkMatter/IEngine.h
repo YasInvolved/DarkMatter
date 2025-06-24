@@ -8,7 +8,7 @@
 
 namespace DarkMatter
 {
-   class DM_API IEngine
+   class IEngine
    {
    public:
       virtual ~IEngine() = default;
