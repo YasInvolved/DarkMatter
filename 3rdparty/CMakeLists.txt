@@ -21,4 +21,9 @@ set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
 set(SDL_HAPTIC OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(SDL)
+
 add_subdirectory(volk)
+
+set(SPDLOG_BUILD_EXAMPLE OFF CACHE BOOL "" FORCE)
+set(SPDLOG_BUILD_EXAMPLE_HO OFF CACHE BOOL "" FORCE)
+add_subdirectory(spdlog)
