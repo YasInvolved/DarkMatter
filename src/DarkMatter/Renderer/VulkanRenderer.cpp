@@ -1,6 +1,10 @@
 #include <DarkMatter/Renderer/VulkanRenderer.h>
 
-using VulkanRenderer = DarkMatter::Renderer::VulkanRenderer;
+using VulkanRenderer = DarkMatter::VulkanRenderer;
+
+VulkanRenderer::VulkanRenderer(const std::string_view gameName)
+   : m_gameName(gameName)
+{ }
 
 void VulkanRenderer::Init()
 {

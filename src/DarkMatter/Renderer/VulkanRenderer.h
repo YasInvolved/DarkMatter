@@ -3,11 +3,13 @@
 
 #include <DarkMatter/Renderer/IRenderer.h>
 
-namespace DarkMatter::Renderer
+namespace DarkMatter
 {
    class VulkanRenderer : public IRenderer
    {
    public:
+      VulkanRenderer(const std::string_view gameName);
+
       void Init() override;
       void Shutdown() override;
 
@@ -17,6 +19,9 @@ namespace DarkMatter::Renderer
       void Resize(uint32_t w, uint32_t h) override;
 
       // void DrawMesh() override;
+
+   private:
+      const std::string m_gameName;
    };
 }
 

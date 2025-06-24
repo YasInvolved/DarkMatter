@@ -3,6 +3,7 @@
 
 #include <DarkMatter/IEngine.h>
 #include <DarkMatter/Engine/Window.h>
+#include <DarkMatter/Renderer/IRenderer.h>
 
 namespace DarkMatter
 {
@@ -25,6 +26,7 @@ namespace DarkMatter
 
       std::unique_ptr<IGame> m_game;
       std::unique_ptr<Window> m_window;
+      std::unique_ptr<IRenderer> m_renderer;
    };
 }
 

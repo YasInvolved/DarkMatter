@@ -1,5 +1,5 @@
 #include <DarkMatter/Engine/Engine.h>
-#include <DarkMatter/Renderer/Renderer.h>
+#include <DarkMatter/Renderer/RendererBuilder.h>
 
 using Engine = DarkMatter::Engine;
 
@@ -31,16 +31,10 @@ bool Engine::initialize()
       }
    );
 
-   using Renderer = DarkMatter::Renderer::Renderer;
-   using RendererCreateInfo = DarkMatter::Renderer::RendererCreateInfo;
-
-   const RendererCreateInfo rendererCreateInfo =
-   {
-      .api = DarkMatter::Renderer::RendererAPI::VULKAN,
-      .window = *m_window
-   };
-
-   Renderer::Init(rendererCreateInfo);
+   m_renderer = RendererBuilder()
+      .setAPI(DarkMatter::RendererAPI::VULKAN)
+      .setApplicationName(m_game->getTitle())
+      .build();
 
    return m_game->onInitialize();
 }

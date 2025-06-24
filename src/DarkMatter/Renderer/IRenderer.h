@@ -1,7 +1,7 @@
 #ifndef _DM_IRENDERER_H_INCLUDED_
 #define _DM_IRENDERER_H_INCLUDED_
 
-namespace DarkMatter::Renderer
+namespace DarkMatter
 {
    class IRenderer
    {
