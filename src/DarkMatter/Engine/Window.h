@@ -14,6 +14,9 @@ namespace DarkMatter
       Window(const std::string& title);
       ~Window();
 
+      Window(const Window&) = delete;
+      Window& operator=(const Window&) = delete;
+
       bool initialize();
       
       // returns false if game should exit
