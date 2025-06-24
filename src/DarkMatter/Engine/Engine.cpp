@@ -20,6 +20,12 @@ bool Engine::initialize()
 
    m_window = std::make_unique<Window>(m_game->getTitle());
    m_window->initialize();
+   m_window->setEventCallback([this](const DarkMatter::Events::Event& event)
+      {
+         // TODO: renderer resize callback and shit like that
+         m_game->onEvent(event);
+      }
+   );
 
    return m_game->onInitialize();
 }

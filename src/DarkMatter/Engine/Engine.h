@@ -18,6 +18,9 @@ namespace DarkMatter
       void run() override;
       void shutdown() override;
 
+      // forward to window
+      void registerEventCallback(EventCallback cb) override;
+
       void update();
       void render();
    private:

@@ -1,6 +1,8 @@
 #ifndef _DM_IGAME_H_INCLUDED_
 #define _DM_IGAME_H_INCLUDED_
 
+#include <DarkMatter/Events/Event.h>
+
 #include <string>
 
 namespace DarkMatter
@@ -14,6 +16,7 @@ namespace DarkMatter
       virtual void onShutdown() = 0;
       virtual void onUpdate() = 0;
       virtual void onRender() = 0;
+      virtual void onEvent(const Events::Event& event) = 0;
 
       virtual std::string getTitle() const = 0;
    };

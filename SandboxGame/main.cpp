@@ -26,6 +26,11 @@ public:
 
    }
 
+   void onEvent(const DarkMatter::Events::Event& event) override
+   {
+      
+   }
+
    std::string getTitle() const override
    {
       return "SandboxGame";
