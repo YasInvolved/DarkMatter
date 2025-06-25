@@ -30,7 +30,7 @@ namespace DarkMatter
       static const gtl::vector<VulkanPhysicalDevice> getPhysicalDevices(VkInstance instance);
 
       const QueueFamilies& getQueueFamilies() const { return m_queueFamilies; }
-      const gtl::vector<VkExtensionProperties> getAvailableExtensions(const std::string_view layerName = { nullptr }) const;
+      const gtl::vector<VkExtensionProperties> getAvailableExtensions() const;
       const gtl::vector<VkLayerProperties> getAvailableLayers() const;
 
    private:

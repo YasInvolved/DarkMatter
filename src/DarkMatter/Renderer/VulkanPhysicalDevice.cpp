@@ -62,12 +62,12 @@ const gtl::vector<VulkanPhysicalDevice> VulkanPhysicalDevice::getPhysicalDevices
    return devices;
 }
 
-const gtl::vector<VkExtensionProperties> VulkanPhysicalDevice::getAvailableExtensions(const std::string_view layerName) const
+const gtl::vector<VkExtensionProperties> VulkanPhysicalDevice::getAvailableExtensions() const
 {
    uint32_t count;
-   vkEnumerateDeviceExtensionProperties(m_handle, layerName.data(), &count, nullptr);
+   vkEnumerateDeviceExtensionProperties(m_handle, nullptr, &count, nullptr);
    gtl::vector<VkExtensionProperties> extensionProperties(count);
-   vkEnumerateDeviceExtensionProperties(m_handle, layerName.data(), &count, extensionProperties.data());
+   vkEnumerateDeviceExtensionProperties(m_handle, nullptr, &count, extensionProperties.data());
 
    return extensionProperties;
 }
