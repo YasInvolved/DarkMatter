@@ -11,6 +11,10 @@ set(DM_RENDERER_SOURCES
 	 "Renderer/VulkanRenderer.cpp"
 	 "Renderer/RendererBuilder.h" 
 	 "Renderer/RendererBuilder.cpp"
+     "Renderer/VulkanPhysicalDevice.h" 
+	 "Renderer/VulkanLogicalDevice.h" 
+	 "Renderer/VulkanPhysicalDevice.cpp" 
+	 "Renderer/VulkanLogicalDevice.cpp"
 )
 
 add_library(DarkMatter SHARED ${DM_ENGINE_SOURCES} ${DM_RENDERER_SOURCES} "pch.cpp")
