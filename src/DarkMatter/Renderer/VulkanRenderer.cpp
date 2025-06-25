@@ -45,6 +45,8 @@ bool VulkanRenderer::Init()
 
    volkLoadInstance(m_instance);
 
+   m_availableDevices = VulkanPhysicalDevice::getPhysicalDevices(m_instance);
+
    return true;
 }
 

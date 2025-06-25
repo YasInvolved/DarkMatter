@@ -10,6 +10,8 @@ namespace DarkMatter
       ~VulkanPhysicalDevice();
 
       operator VkPhysicalDevice() const { return m_handle; }
+
+      static const gtl::vector<VkPhysicalDevice> getPhysicalDevices(VkInstance instance);
    private:
       VkPhysicalDevice m_handle;
    };

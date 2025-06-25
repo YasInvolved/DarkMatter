@@ -2,6 +2,7 @@
 #define _DM_VULKAN_RENDERER_H_INCLUDED_
 
 #include <DarkMatter/Renderer/IRenderer.h>
+#include <DarkMatter/Renderer/VulkanPhysicalDevice.h>
 
 namespace DarkMatter
 {
@@ -24,6 +25,7 @@ namespace DarkMatter
       const std::string m_gameName;
 
       VkInstance m_instance;
+      gtl::vector<VkPhysicalDevice> m_availableDevices;
    };
 }
 

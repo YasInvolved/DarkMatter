@@ -3,8 +3,9 @@
 #include <memory>
 #include <optional>
 #include <cassert> // TODO: Define custom assert macro
-#include <vector>
 #include <span>
+
+#include <gtl/vector.hpp>
 
 #include <volk.h>
 
