@@ -21,6 +21,7 @@ namespace DarkMatter
       void shutdown() override;
 
       const ILoggerManager& getLoggerManager() const override;
+      const Window& getWindow() const { return *m_window; }
 
       void update();
       void render();

@@ -45,6 +45,9 @@ bool VulkanRenderer::Init()
 
    volkLoadInstance(m_instance);
 
+   if (!SDL_Vulkan_CreateSurface(m_engine.getWindow().GetHandle(), m_instance, nullptr, &m_surface))
+      return false;
+
    m_availableDevices = VulkanPhysicalDevice::getPhysicalDevices(m_instance);
 
    return true;
@@ -52,6 +55,7 @@ bool VulkanRenderer::Init()
 
 void VulkanRenderer::Shutdown()
 {
+   SDL_Vulkan_DestroySurface(m_instance, m_surface, nullptr);
    vkDestroyInstance(m_instance, nullptr);
 }
 

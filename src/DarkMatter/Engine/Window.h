@@ -22,6 +22,8 @@ namespace DarkMatter
       void handleEvents();
 
       void setEventCallback(EventCallback cb);
+
+      SDL_Window* const GetHandle() const { assert(m_window != nullptr); return m_window; }
    private:
       std::string m_title;
       SDL_Window* m_window;

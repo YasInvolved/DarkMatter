@@ -27,6 +27,7 @@ namespace DarkMatter
       const Engine& m_engine;
 
       VkInstance m_instance = nullptr;
+      VkSurfaceKHR m_surface = nullptr;
       gtl::vector<VkPhysicalDevice> m_availableDevices;
    };
 }
