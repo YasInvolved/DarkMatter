@@ -10,4 +10,6 @@ std::unique_ptr<DarkMatter::IRenderer> RendererBuilder::build() const
       assert(!m_appName.empty());
       return std::make_unique<VulkanRenderer>(m_appName);
    }
+
+   return std::make_unique<VulkanRenderer>(nullptr);
 }

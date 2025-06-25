@@ -35,6 +35,9 @@ bool Engine::initialize()
       .setAPI(DarkMatter::RendererAPI::VULKAN)
       .setApplicationName(m_game->getTitle())
       .build();
+   
+   if (!m_renderer->Init())
+      return false;
 
    return m_game->onInitialize();
 }
@@ -51,6 +54,7 @@ void Engine::run()
 
 void Engine::shutdown()
 {
+   m_renderer->Shutdown();
    m_game->onShutdown();
 }
 

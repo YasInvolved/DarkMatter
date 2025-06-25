@@ -10,7 +10,7 @@ namespace DarkMatter
    public:
       VulkanRenderer(const std::string_view gameName);
 
-      void Init() override;
+      bool Init() override;
       void Shutdown() override;
 
       void BeginFrame() override;
@@ -22,6 +22,8 @@ namespace DarkMatter
 
    private:
       const std::string m_gameName;
+
+      VkInstance m_instance;
    };
 }
 
