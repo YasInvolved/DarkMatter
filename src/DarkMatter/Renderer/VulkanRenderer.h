@@ -1,6 +1,7 @@
 #ifndef _DM_VULKAN_RENDERER_H_INCLUDED_
 #define _DM_VULKAN_RENDERER_H_INCLUDED_
 
+#include <DarkMatter/Engine/Engine.h>
 #include <DarkMatter/Renderer/IRenderer.h>
 #include <DarkMatter/Renderer/VulkanPhysicalDevice.h>
 
@@ -9,7 +10,7 @@ namespace DarkMatter
    class VulkanRenderer : public IRenderer
    {
    public:
-      VulkanRenderer(const std::string_view gameName);
+      VulkanRenderer(const Engine& engine, std::string_view gameName);
 
       bool Init() override;
       void Shutdown() override;
@@ -23,8 +24,9 @@ namespace DarkMatter
 
    private:
       const std::string m_gameName;
+      const Engine& m_engine;
 
-      VkInstance m_instance;
+      VkInstance m_instance = nullptr;
       gtl::vector<VkPhysicalDevice> m_availableDevices;
    };
 }

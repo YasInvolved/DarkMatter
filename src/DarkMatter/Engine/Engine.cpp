@@ -36,7 +36,7 @@ bool Engine::initialize()
    m_renderer = RendererBuilder()
       .setAPI(DarkMatter::RendererAPI::VULKAN)
       .setApplicationName(m_game->getTitle())
-      .build();
+      .build(*this);
    
    if (!m_renderer->Init())
       return false;

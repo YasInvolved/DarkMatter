@@ -2,8 +2,8 @@
 
 using VulkanRenderer = DarkMatter::VulkanRenderer;
 
-VulkanRenderer::VulkanRenderer(const std::string_view gameName)
-   : m_gameName(gameName), m_instance(nullptr)
+VulkanRenderer::VulkanRenderer(const Engine& engine, const std::string_view gameName)
+   : m_gameName(gameName), m_engine(engine)
 { }
 
 bool VulkanRenderer::Init()
@@ -16,7 +16,7 @@ bool VulkanRenderer::Init()
    {
       .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
       .pNext = nullptr,
-      .pApplicationName = m_gameName.c_str(),
+      .pApplicationName = m_gameName.empty() ? "Game" : m_gameName.c_str(),
       .applicationVersion = VK_MAKE_VERSION(1, 0, 0), // TODO: Application version in RendererCreateInfo struct
       .pEngineName = "Dark Matter",
       .engineVersion = VK_MAKE_VERSION(1, 0, 0),
