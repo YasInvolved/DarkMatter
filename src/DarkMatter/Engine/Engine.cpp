@@ -4,7 +4,9 @@
 using Engine = DarkMatter::Engine;
 
 Engine::Engine()
-   : m_game(nullptr), m_window(nullptr)
+   : m_game(nullptr), 
+   m_window(nullptr), 
+   m_loggerManager(std::make_unique<LoggerManager>())
 {}
 
 Engine::~Engine() {}
@@ -39,7 +41,7 @@ bool Engine::initialize()
    if (!m_renderer->Init())
       return false;
 
-   return m_game->onInitialize();
+   return m_game->onInitialize(*this);
 }
 
 void Engine::run()
@@ -66,6 +68,11 @@ void Engine::update()
 void Engine::render()
 {
    m_game->onRender();
+}
+
+const DarkMatter::ILoggerManager& Engine::getLoggerManager() const
+{
+   return *m_loggerManager;
 }
 
 DarkMatter::IEngine* CreateEngine()

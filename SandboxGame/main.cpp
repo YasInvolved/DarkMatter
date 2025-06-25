@@ -1,20 +1,21 @@
 #include <DarkMatter/DarkMatter.h>
-#include <iostream>
 
 class Game : public DarkMatter::IGame
 {
+   const DarkMatter::IEngine* m_engine = nullptr;
 public:
    Game() = default;
    ~Game() = default;
 
-   bool onInitialize() override
+   bool onInitialize(const DarkMatter::IEngine& engine) override
    {
+      m_engine = &engine;
       return true;
    }
 
    void onShutdown() override
    {
-
+      
    }
 
    void onUpdate() override
@@ -29,10 +30,12 @@ public:
 
    void onEvent(const DarkMatter::Events::Event& event) override
    {
+      auto& gameLogger = m_engine->getLoggerManager().getLoggerByName(getTitle());
+
       if (event.type == DarkMatter::Events::EventType::KEY_DOWN)
-         std::cout << event.keyEvent.keyCode << " was pressed\n";
+         gameLogger.info("{} was pressed", event.keyEvent.keyCode);
       else if (event.type == DarkMatter::Events::EventType::KEY_UP)
-         std::cout << event.keyEvent.keyCode << " was released\n";
+         gameLogger.info("{} was released", event.keyEvent.keyCode);
    }
 
    std::string getTitle() const override

@@ -7,12 +7,14 @@
 
 namespace DarkMatter
 {
+   class IEngine;
+   
    class IGame
    {
    public:
       virtual ~IGame() = default;
 
-      virtual bool onInitialize() = 0;
+      virtual bool onInitialize(const IEngine& engine) = 0;
       virtual void onShutdown() = 0;
       virtual void onUpdate() = 0;
       virtual void onRender() = 0;

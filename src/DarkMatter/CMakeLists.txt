@@ -3,7 +3,7 @@ set(DM_ENGINE_SOURCES
 	"Engine/Engine.h"
 	"Engine/Window.h" 
 	"Engine/Window.cpp"
-)
+ "Engine/LoggerManager.h" "Engine/LoggerManager.cpp")
 
 set(DM_RENDERER_SOURCES
 	 "Renderer/IRenderer.h"
@@ -21,4 +21,7 @@ target_include_directories(DarkMatter
 
 target_compile_definitions(DarkMatter PRIVATE DM_EXPORT_SYMBOLS)
 target_precompile_headers(DarkMatter PRIVATE "pch.h")
-target_link_libraries(DarkMatter PRIVATE SDL3::SDL3 volk::volk GPUOpen::VulkanMemoryAllocator)
+target_link_libraries(DarkMatter 
+	PRIVATE SDL3::SDL3 volk::volk GPUOpen::VulkanMemoryAllocator
+	PUBLIC spdlog::spdlog
+)

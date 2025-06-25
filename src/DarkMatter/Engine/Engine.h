@@ -3,6 +3,7 @@
 
 #include <DarkMatter/IEngine.h>
 #include <DarkMatter/Engine/Window.h>
+#include <DarkMatter/Engine/LoggerManager.h>
 #include <DarkMatter/Renderer/IRenderer.h>
 
 namespace DarkMatter
@@ -19,10 +20,14 @@ namespace DarkMatter
       void run() override;
       void shutdown() override;
 
+      const ILoggerManager& getLoggerManager() const override;
+
       void update();
       void render();
    private:
       bool m_running = true;
+
+      std::unique_ptr<LoggerManager> m_loggerManager;
 
       std::unique_ptr<IGame> m_game;
       std::unique_ptr<Window> m_window;

@@ -3,6 +3,7 @@
 
 #include <DarkMatter/ExportAPI.h>
 #include <DarkMatter/IGame.h>
+#include <DarkMatter/ILoggerManager.h>
 
 #include <memory>
 
@@ -18,6 +19,8 @@ namespace DarkMatter
       virtual bool initialize() = 0;
       virtual void run() = 0;
       virtual void shutdown() = 0;
+
+      virtual const ILoggerManager& getLoggerManager() const = 0;
    };
 }
 
