@@ -21,4 +21,4 @@ target_include_directories(DarkMatter
 
 target_compile_definitions(DarkMatter PRIVATE DM_EXPORT_SYMBOLS)
 target_precompile_headers(DarkMatter PRIVATE "pch.h")
-target_link_libraries(DarkMatter PRIVATE SDL3::SDL3 volk::volk)
+target_link_libraries(DarkMatter PRIVATE SDL3::SDL3 volk::volk GPUOpen::VulkanMemoryAllocator)
