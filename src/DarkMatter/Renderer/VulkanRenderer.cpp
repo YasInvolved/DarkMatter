@@ -49,6 +49,11 @@ bool VulkanRenderer::Init()
       return false;
 
    m_availableDevices = VulkanPhysicalDevice::getPhysicalDevices(m_instance);
+   for (const auto& physicalDevice : m_availableDevices)
+   {
+      if (physicalDevice.getQueueFamilies().isComplete())
+         m_device = std::make_unique<VulkanLogicalDevice>(physicalDevice);
+   }
 
    return true;
 }

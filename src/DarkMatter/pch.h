@@ -6,6 +6,7 @@
 #include <span>
 
 #include <gtl/vector.hpp>
+#include <gtl/memoize.hpp>
 
 #include <volk.h>
 

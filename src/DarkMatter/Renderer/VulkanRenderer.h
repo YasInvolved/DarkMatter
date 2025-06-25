@@ -4,6 +4,7 @@
 #include <DarkMatter/Engine/Engine.h>
 #include <DarkMatter/Renderer/IRenderer.h>
 #include <DarkMatter/Renderer/VulkanPhysicalDevice.h>
+#include <DarkMatter/Renderer/VulkanLogicalDevice.h>
 
 namespace DarkMatter
 {
@@ -28,7 +29,8 @@ namespace DarkMatter
 
       VkInstance m_instance = nullptr;
       VkSurfaceKHR m_surface = nullptr;
-      gtl::vector<VkPhysicalDevice> m_availableDevices;
+      gtl::vector<VulkanPhysicalDevice> m_availableDevices;
+      std::unique_ptr<VulkanLogicalDevice> m_device;
    };
 }
 
