@@ -10,9 +10,9 @@ VulkanPhysicalDevice::VulkanPhysicalDevice(VkPhysicalDevice device)
    gtl::vector<VkQueueFamilyProperties> queueFamilyProperties(count);
    vkGetPhysicalDeviceQueueFamilyProperties(m_handle, &count, queueFamilyProperties.data());
    
-   auto areTypesSupported = [this](const VkQueueFlags queueFlags, const VkQueueFlags bits)
+   auto areTypesSupported = [](const VkQueueFlags queueFlags, const VkQueueFlags bits)
       {
-         return queueFlags & bits == bits;
+         return (queueFlags & bits) == bits;
       };
 
    for (uint32_t i = 0; i < count; i++)
@@ -25,13 +25,13 @@ VulkanPhysicalDevice::VulkanPhysicalDevice(VkPhysicalDevice device)
          continue;
       }
       
-      else if (!m_queueFamilies.compute.has_value() && areTypesSupported(queueFamilyProperty.queueFlags, VK_QUEUE_COMPUTE_BIT | ~VK_QUEUE_TRANSFER_BIT))
+      if (!m_queueFamilies.compute.has_value() && areTypesSupported(queueFamilyProperty.queueFlags, VK_QUEUE_COMPUTE_BIT))
       {
          m_queueFamilies.compute = i;
          continue;
       }
 
-      else if (!m_queueFamilies.transfer.has_value() && areTypesSupported(queueFamilyProperty.queueFlags, VK_QUEUE_TRANSFER_BIT | ~VK_QUEUE_COMPUTE_BIT))
+      if (!m_queueFamilies.transfer.has_value() && areTypesSupported(queueFamilyProperty.queueFlags, VK_QUEUE_TRANSFER_BIT))
       {
          m_queueFamilies.transfer = i;
          continue;

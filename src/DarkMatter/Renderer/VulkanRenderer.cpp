@@ -55,11 +55,18 @@ bool VulkanRenderer::Init()
          m_device = std::make_unique<VulkanLogicalDevice>(physicalDevice);
    }
 
+   if (m_device.get() == nullptr)
+      return false;
+
+   if (!m_device->initialize())
+      return false;
+
    return true;
 }
 
 void VulkanRenderer::Shutdown()
 {
+   m_device.reset();
    SDL_Vulkan_DestroySurface(m_instance, m_surface, nullptr);
    vkDestroyInstance(m_instance, nullptr);
 }

@@ -7,6 +7,7 @@
 
 #include <gtl/vector.hpp>
 #include <gtl/memoize.hpp>
+#include <gtl/phmap.hpp>
 
 #include <volk.h>
 
