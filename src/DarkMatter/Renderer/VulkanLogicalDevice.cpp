@@ -116,8 +116,5 @@ bool VulkanLogicalDevice::initialize()
 const gtl::vector<VkQueue>& VulkanLogicalDevice::getQueues(uint32_t family) const
 {
    assert(m_isInitialized);
-   if (!m_queues.contains(family))
-      return {};
-
    return m_queues.at(family);
 }
