@@ -33,3 +33,5 @@ target_link_libraries(DarkMatter
 	PRIVATE SDL3::SDL3 volk::volk GPUOpen::VulkanMemoryAllocator gtl glm::glm shaderc
 	PUBLIC spdlog::spdlog
 )
+
+DM_EMBED_RESOURCE(DarkMatter Shaders/basic_glsl.vert.glsl)

@@ -9,5 +9,8 @@ get_filename_component(DM_BUILD_PATH "${CMAKE_CURRENT_BINARY_DIR}" ABSOLUTE CACH
 
 add_subdirectory(3rdparty)
 
+find_package(Python3 COMPONENTS Interpreter)
+include(cmake/EmbedResource.cmake)
+
 add_subdirectory(src/DarkMatter)
 add_subdirectory(SandboxGame)
