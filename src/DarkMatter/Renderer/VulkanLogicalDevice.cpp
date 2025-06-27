@@ -101,5 +101,23 @@ bool VulkanLogicalDevice::initialize()
       return false;
 
    volkLoadDevice(m_handle);
+
+   for (const auto& [family, count] : m_requestedQueues)
+   {
+      m_queues[family].resize(count);
+
+      for (uint32_t i = 0; i < count; i++)
+         vkGetDeviceQueue(m_handle, family, i, &m_queues[family][i]);
+   }
+
    return true;
+}
+
+const gtl::vector<VkQueue>& VulkanLogicalDevice::getQueues(uint32_t family) const
+{
+   assert(m_isInitialized);
+   if (!m_queues.contains(family))
+      return {};
+
+   return m_queues.at(family);
 }

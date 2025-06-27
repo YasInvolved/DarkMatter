@@ -21,6 +21,8 @@ namespace DarkMatter
 
       bool initialize();
 
+      const gtl::vector<VkQueue>& getQueues(uint32_t family) const;
+
       operator VkDevice() const { return m_handle; }
 
    private:
@@ -32,6 +34,8 @@ namespace DarkMatter
       gtl::vector<VkExtensionProperties> m_extensionProperties;
       gtl::vector<const char*> m_enabledExtensions;
       gtl::flat_hash_map<uint32_t, uint32_t> m_requestedQueues;
+
+      gtl::flat_hash_map<uint32_t, gtl::vector<VkQueue>> m_queues;
 
       gtl::vector<VkLayerProperties> m_layerProperties;
       gtl::vector<const char*> m_enabledLayers;

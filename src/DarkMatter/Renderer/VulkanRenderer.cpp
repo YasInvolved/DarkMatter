@@ -68,6 +68,8 @@ bool VulkanRenderer::Init()
    if (!m_device->requestExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME))
       return false;
 
+   m_device->requestQueues(m_device->getPhysicalDevice().getQueueFamilies().graphics.value(), 1);
+
    if (!m_device->initialize())
       return false;
 
@@ -87,8 +89,8 @@ bool VulkanRenderer::Init()
       .flags = 0,
       .surface = m_surface,
       .minImageCount = imageCount,
-      .imageFormat = surfaceFormats[0].format,
-      .imageColorSpace = surfaceFormats[0].colorSpace,
+      .imageFormat = surfaceFormats[0].format, // TODO: actually select a format
+      .imageColorSpace = surfaceFormats[0].colorSpace, 
       .imageExtent = surfaceCapabilities.currentExtent,
       .imageArrayLayers = 1,
       .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
@@ -104,6 +106,9 @@ bool VulkanRenderer::Init()
 
    if (vkCreateSwapchainKHR(*m_device, &swapchainCreateInfo, nullptr, &m_swapchain) != VK_SUCCESS)
       return false;
+
+   const auto& graphicsQueues = m_device->getQueues(gfxQueueFamilyIndex);
+   m_engine.getLoggerManager().getLoggerByName("renderer").info("Graphics queue count: {}", graphicsQueues.size());
 
    return true;
 }
