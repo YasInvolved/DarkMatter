@@ -3,7 +3,11 @@ set(DM_ENGINE_SOURCES
 	"Engine/Engine.h"
 	"Engine/Window.h" 
 	"Engine/Window.cpp"
- "Engine/LoggerManager.h" "Engine/LoggerManager.cpp" "Engine/ThreadPool.h" "Engine/ThreadPool.cpp")
+	"Engine/LoggerManager.h" 
+	"Engine/LoggerManager.cpp" 
+	"Engine/ThreadPool.h" 
+	"Engine/ThreadPool.cpp"
+)
 
 set(DM_RENDERER_SOURCES
 	 "Renderer/IRenderer.h"
