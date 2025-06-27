@@ -4,6 +4,12 @@
 #include <optional>
 #include <cassert> // TODO: Define custom assert macro
 #include <span>
+#include <thread>
+#include <future>
+#include <queue>
+#include <condition_variable>
+#include <atomic>
+#include <mutex>
 
 #include <gtl/vector.hpp>
 #include <gtl/memoize.hpp>

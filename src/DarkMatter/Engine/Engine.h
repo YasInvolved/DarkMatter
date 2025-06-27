@@ -4,6 +4,7 @@
 #include <DarkMatter/IEngine.h>
 #include <DarkMatter/Engine/Window.h>
 #include <DarkMatter/Engine/LoggerManager.h>
+#include <DarkMatter/Engine/ThreadPool.h>
 #include <DarkMatter/Renderer/IRenderer.h>
 
 namespace DarkMatter
@@ -22,9 +23,11 @@ namespace DarkMatter
 
       const ILoggerManager& getLoggerManager() const override;
       const Window& getWindow() const { return *m_window; }
+      const ThreadPool& getThreadPool() const { return *m_threadPool; }
 
       void update();
       void render();
+
    private:
       bool m_running = true;
 
@@ -33,6 +36,7 @@ namespace DarkMatter
       std::unique_ptr<IGame> m_game;
       std::unique_ptr<Window> m_window;
       std::unique_ptr<IRenderer> m_renderer;
+      std::unique_ptr<ThreadPool> m_threadPool;
    };
 }
 
