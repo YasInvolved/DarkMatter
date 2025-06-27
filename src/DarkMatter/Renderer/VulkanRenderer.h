@@ -30,6 +30,8 @@ namespace DarkMatter
       VkInstance m_instance = VK_NULL_HANDLE;
       VkSurfaceKHR m_surface = VK_NULL_HANDLE;
       VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
+      VkCommandPool m_commandPool = VK_NULL_HANDLE;
+      VkCommandBuffer m_commandBuffer = VK_NULL_HANDLE;
       gtl::vector<VulkanPhysicalDevice> m_availableDevices;
       std::unique_ptr<VulkanLogicalDevice> m_device;
    };

@@ -107,11 +107,38 @@ bool VulkanRenderer::Init()
    if (vkCreateSwapchainKHR(*m_device, &swapchainCreateInfo, nullptr, &m_swapchain) != VK_SUCCESS)
       return false;
 
+   const VkCommandPoolCreateInfo commandPoolCreateInfo =
+   {
+      .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .queueFamilyIndex = gfxQueueFamilyIndex,
+   };  
+
+   if (vkCreateCommandPool(*m_device, &commandPoolCreateInfo, nullptr, &m_commandPool) != VK_SUCCESS)
+      return false;
+
+   const VkCommandBufferAllocateInfo commandBufferAllocateInfo =
+   {
+      .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+      .pNext = nullptr,
+      .commandPool = m_commandPool,
+      .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+      .commandBufferCount = 1,
+   };
+
+   if (vkAllocateCommandBuffers(*m_device, &commandBufferAllocateInfo, &m_commandBuffer) != VK_SUCCESS)
+      return false;
+
    return true;
 }
 
 void VulkanRenderer::Shutdown()
 {
+   vkDeviceWaitIdle(*m_device);
+
+   vkFreeCommandBuffers(*m_device, m_commandPool, 1, &m_commandBuffer);
+   vkDestroyCommandPool(*m_device, m_commandPool, nullptr);
    vkDestroySwapchainKHR(*m_device, m_swapchain, nullptr);
    m_device.reset();
    SDL_Vulkan_DestroySurface(m_instance, m_surface, nullptr);
