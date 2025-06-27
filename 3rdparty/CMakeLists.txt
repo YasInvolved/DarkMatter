@@ -30,3 +30,13 @@ add_subdirectory(spdlog)
 add_subdirectory(vma)
 add_subdirectory(gtl)
 add_subdirectory(glm)
+
+add_subdirectory(SPIRV-Headers)
+add_subdirectory(SPIRV-Tools)
+add_subdirectory(glslang)
+
+set(SHADERC_SKIP_TESTS ON CACHE BOOL "" FORCE)
+set(SHADERC_SKIP_INSTALL ON CACHE BOOL "" FORCE)
+set(SHADERC_SKIP_EXAMPLES ON CACHE BOOL "" FORCE)
+set(SHADERC_ENABLE_SHARED_CRT ON CACHE BOOL "" FORCE)
+add_subdirectory(shaderc)
