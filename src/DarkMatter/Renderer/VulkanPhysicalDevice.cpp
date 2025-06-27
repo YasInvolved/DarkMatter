@@ -81,3 +81,21 @@ const gtl::vector<VkLayerProperties> VulkanPhysicalDevice::getAvailableLayers() 
 
    return layerProperties;
 }
+
+VkSurfaceCapabilitiesKHR VulkanPhysicalDevice::getSurfaceCapabilities(VkSurfaceKHR surface) const
+{
+   VkSurfaceCapabilitiesKHR surfaceCapabilities;
+   vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_handle, surface, &surfaceCapabilities);
+
+   return surfaceCapabilities;
+}
+
+const gtl::vector<VkSurfaceFormatKHR> VulkanPhysicalDevice::getSurfaceFormats(VkSurfaceKHR surface) const
+{
+   uint32_t count;
+   vkGetPhysicalDeviceSurfaceFormatsKHR(m_handle, surface, &count, nullptr);
+   gtl::vector<VkSurfaceFormatKHR> formats(count);
+   vkGetPhysicalDeviceSurfaceFormatsKHR(m_handle, surface, &count, formats.data());
+
+   return formats;
+}

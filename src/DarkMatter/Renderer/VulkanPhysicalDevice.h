@@ -32,6 +32,8 @@ namespace DarkMatter
       const QueueFamilies& getQueueFamilies() const { return m_queueFamilies; }
       const gtl::vector<VkExtensionProperties> getAvailableExtensions() const;
       const gtl::vector<VkLayerProperties> getAvailableLayers() const;
+      VkSurfaceCapabilitiesKHR getSurfaceCapabilities(VkSurfaceKHR surface) const;
+      const gtl::vector<VkSurfaceFormatKHR> getSurfaceFormats(VkSurfaceKHR surface) const;
 
    private:
       VkPhysicalDevice m_handle;
