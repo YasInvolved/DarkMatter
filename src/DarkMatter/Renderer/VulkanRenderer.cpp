@@ -107,9 +107,6 @@ bool VulkanRenderer::Init()
    if (vkCreateSwapchainKHR(*m_device, &swapchainCreateInfo, nullptr, &m_swapchain) != VK_SUCCESS)
       return false;
 
-   const auto& graphicsQueues = m_device->getQueues(gfxQueueFamilyIndex);
-   m_engine.getLoggerManager().getLoggerByName("renderer").info("Graphics queue count: {}", graphicsQueues.size());
-
    return true;
 }
 
