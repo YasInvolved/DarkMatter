@@ -27,8 +27,9 @@ namespace DarkMatter
       const std::string m_gameName;
       const Engine& m_engine;
 
-      VkInstance m_instance = nullptr;
-      VkSurfaceKHR m_surface = nullptr;
+      VkInstance m_instance = VK_NULL_HANDLE;
+      VkSurfaceKHR m_surface = VK_NULL_HANDLE;
+      VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
       gtl::vector<VulkanPhysicalDevice> m_availableDevices;
       std::unique_ptr<VulkanLogicalDevice> m_device;
    };

@@ -26,6 +26,12 @@ bool VulkanRenderer::Init()
    uint32_t count;
    SDL_Vulkan_GetInstanceExtensions(&count);
 
+   static constexpr const char* usedLayers[] = { 
+#ifndef _NDEBUG
+      "VK_LAYER_KHRONOS_validation" 
+#endif
+   };
+
    // TODO: validation layer
    const VkInstanceCreateInfo instanceCreateInfo =
    {
@@ -33,8 +39,8 @@ bool VulkanRenderer::Init()
       .pNext = nullptr,
       .flags = 0,
       .pApplicationInfo = &applicationInfo,
-      .enabledLayerCount = 0,
-      .ppEnabledLayerNames = nullptr,
+      .enabledLayerCount = sizeof(usedLayers) / sizeof(const char*),
+      .ppEnabledLayerNames = usedLayers,
       .enabledExtensionCount = count,
       .ppEnabledExtensionNames = SDL_Vulkan_GetInstanceExtensions(&count),
    };
@@ -58,7 +64,45 @@ bool VulkanRenderer::Init()
    if (m_device.get() == nullptr)
       return false;
 
+   // TODO: just check if another device has it
+   if (!m_device->requestExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME))
+      return false;
+
    if (!m_device->initialize())
+      return false;
+
+   auto surfaceCapabilities = m_device->getPhysicalDevice().getSurfaceCapabilities(m_surface);
+   const auto surfaceFormats = m_device->getPhysicalDevice().getSurfaceFormats(m_surface);
+
+   uint32_t imageCount = surfaceCapabilities.minImageCount + 1;
+   if (imageCount > surfaceCapabilities.maxImageCount)
+      imageCount = std::clamp(imageCount, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
+
+   const auto gfxQueueFamilyIndex = m_device->getPhysicalDevice().getQueueFamilies().graphics.value();
+
+   const VkSwapchainCreateInfoKHR swapchainCreateInfo =
+   {
+      .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+      .pNext = nullptr,
+      .flags = 0,
+      .surface = m_surface,
+      .minImageCount = imageCount,
+      .imageFormat = surfaceFormats[0].format,
+      .imageColorSpace = surfaceFormats[0].colorSpace,
+      .imageExtent = surfaceCapabilities.currentExtent,
+      .imageArrayLayers = 1,
+      .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+      .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
+      .queueFamilyIndexCount = 1,
+      .pQueueFamilyIndices = &gfxQueueFamilyIndex,
+      .preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
+      .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+      .presentMode = VK_PRESENT_MODE_FIFO_KHR,
+      .clipped = VK_FALSE,
+      .oldSwapchain = nullptr
+   };
+
+   if (vkCreateSwapchainKHR(*m_device, &swapchainCreateInfo, nullptr, &m_swapchain) != VK_SUCCESS)
       return false;
 
    return true;
@@ -66,6 +110,7 @@ bool VulkanRenderer::Init()
 
 void VulkanRenderer::Shutdown()
 {
+   vkDestroySwapchainKHR(*m_device, m_swapchain, nullptr);
    m_device.reset();
    SDL_Vulkan_DestroySurface(m_instance, m_surface, nullptr);
    vkDestroyInstance(m_instance, nullptr);
