@@ -23,7 +23,7 @@ namespace DarkMatter
 
       const ILoggerManager& getLoggerManager() const override;
       const Window& getWindow() const { return *m_window; }
-      const ThreadPool& getThreadPool() const { return *m_threadPool; }
+      ThreadPool& getThreadPool() const { return *m_threadPool; }
 
       void update();
       void render();

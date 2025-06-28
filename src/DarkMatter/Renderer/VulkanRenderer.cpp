@@ -134,25 +134,23 @@ bool VulkanRenderer::Init()
 
    // TODO: parallel shaders compilation, it takes some time to compile them
    auto& logger = m_engine.getLoggerManager().getLoggerByName("renderer");
-   std::string vertSource(Embedded::basic_vert_glsl, Embedded::basic_vert_glsl + Embedded::basic_vert_glsl_len);
-   auto compileResultVert = compileGLSL(vertSource, shaderc_glsl_vertex_shader);
-   if (!compileResultVert.result)
-   {
-      logger.critical("Failed to compile vertex shader");
-      return false;
-   }
+   auto& threadPool = m_engine.getThreadPool();
 
-   logger.info("Vertex shader compiled successfully");
+   auto compileVertexShader = [this]()
+      {
+         std::string vertSource(Embedded::basic_vert_glsl, Embedded::basic_vert_glsl + Embedded::basic_vert_glsl_len);
+         return compileGLSL(vertSource, shaderc_glsl_default_vertex_shader);
+      };
 
-   std::string fragSource(Embedded::basic_frag_glsl, Embedded::basic_frag_glsl + Embedded::basic_frag_glsl_len);
-   auto compileResultFrag = compileGLSL(fragSource, shaderc_glsl_fragment_shader);
-   if (!compileResultFrag.result)
-   {
-      logger.critical("Failed to compile fragment shader");
-      return false;
-   }
+   auto compileFragmentShader = [this]()
+      {
 
-   logger.info("Fragment shdaer compiled successfully");
+         std::string fragSource(Embedded::basic_frag_glsl, Embedded::basic_frag_glsl + Embedded::basic_frag_glsl_len);
+         return compileGLSL(fragSource, shaderc_glsl_default_fragment_shader);
+      };
+
+   auto vertResult = threadPool.enqueue(compileVertexShader);
+   auto fragResult = threadPool.enqueue(compileFragmentShader);
 
    return true;
 }

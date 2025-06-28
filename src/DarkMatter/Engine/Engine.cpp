@@ -6,7 +6,8 @@ using Engine = DarkMatter::Engine;
 Engine::Engine()
    : m_game(nullptr), 
    m_window(nullptr), 
-   m_loggerManager(std::make_unique<LoggerManager>())
+   m_loggerManager(std::make_unique<LoggerManager>()),
+   m_threadPool(std::make_unique<ThreadPool>(8))
 {}
 
 Engine::~Engine() {}
@@ -40,6 +41,8 @@ bool Engine::initialize()
    
    if (!m_renderer->Init())
       return false;
+
+   m_threadPool->enqueue([this](int a) { m_loggerManager->getSystemLogger().info("Threadpool test: {}", a); }, 27);
 
    return m_game->onInitialize(*this);
 }

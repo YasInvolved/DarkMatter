@@ -9,16 +9,21 @@ namespace DarkMatter
       ThreadPool(size_t workerCount);
       ~ThreadPool();
 
-      template<typename F, typename... Args>
-      auto enqueue(F&& func, Args&&... args) -> std::future<std::invoke_result_t<F, Args...>>
-      {
-         using return_type = std::invoke_result_t<F, Args...>;
+      template <typename F, typename... Args>
+      using FutureType = std::future<std::invoke_result_t<F, Args...>>;
 
-         auto task = std::make_shared<std::packaged_task<void()>>(
-            std::bind(std::forward<F>(func), std::forward<Args>(args)...)
+      template<typename F, typename... Args>
+      auto enqueue(F&& func, Args&&... args) -> FutureType<F, Args...>
+      {
+         using result_t = std::invoke_result_t<F, Args...>;
+
+         auto task = std::make_shared<std::packaged_task<result_t()>>(
+            [func = std::forward<F>(func), ... args = std::forward<Args>(args)]() mutable {
+               return std::invoke(std::move(func), std::move(args)...);
+            }
          );
 
-         std::future<return_type> res = task->get_future();
+         FutureType<F, Args...> res = task->get_future();
 
          {
             std::lock_guard<std::mutex> lock(m_queueMutex);
