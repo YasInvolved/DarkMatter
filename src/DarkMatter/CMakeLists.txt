@@ -34,4 +34,5 @@ target_link_libraries(DarkMatter
 	PUBLIC spdlog::spdlog
 )
 
-DM_EMBED_RESOURCE(DarkMatter Shaders/basic_glsl.vert.glsl)
+DM_EMBED_RESOURCE(DarkMatter Shaders/basic.vert.glsl)
+DM_EMBED_RESOURCE(DarkMatter Shaders/basic.frag.glsl)

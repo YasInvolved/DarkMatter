@@ -1,4 +1,6 @@
 #include <DarkMatter/Renderer/VulkanRenderer.h>
+#include <DarkMatter/Embedded/basic_vert_glsl.h>
+#include <DarkMatter/Embedded/basic_frag_glsl.h>
 
 using VulkanRenderer = DarkMatter::VulkanRenderer;
 
@@ -130,6 +132,28 @@ bool VulkanRenderer::Init()
    if (vkAllocateCommandBuffers(*m_device, &commandBufferAllocateInfo, &m_commandBuffer) != VK_SUCCESS)
       return false;
 
+   // TODO: parallel shaders compilation, it takes some time to compile them
+   auto& logger = m_engine.getLoggerManager().getLoggerByName("renderer");
+   std::string vertSource(Embedded::basic_vert_glsl, Embedded::basic_vert_glsl + Embedded::basic_vert_glsl_len);
+   auto compileResultVert = compileGLSL(vertSource, shaderc_glsl_vertex_shader);
+   if (!compileResultVert.result)
+   {
+      logger.critical("Failed to compile vertex shader");
+      return false;
+   }
+
+   logger.info("Vertex shader compiled successfully");
+
+   std::string fragSource(Embedded::basic_frag_glsl, Embedded::basic_frag_glsl + Embedded::basic_frag_glsl_len);
+   auto compileResultFrag = compileGLSL(fragSource, shaderc_glsl_fragment_shader);
+   if (!compileResultFrag.result)
+   {
+      logger.critical("Failed to compile fragment shader");
+      return false;
+   }
+
+   logger.info("Fragment shdaer compiled successfully");
+
    return true;
 }
 
@@ -158,4 +182,20 @@ void VulkanRenderer::EndFrame()
 void VulkanRenderer::Resize(uint32_t w, uint32_t h)
 {
 
+}
+
+VulkanRenderer::ShaderCompileResult VulkanRenderer::compileGLSL(const std::string& source, shaderc_shader_kind kind)
+{
+   static shaderc::Compiler s_shaderCompiler;
+   static shaderc::CompileOptions s_compileOptions;
+   s_compileOptions.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
+
+   auto result = s_shaderCompiler.CompileGlslToSpv(source, kind, "basic.vert.glsl", s_compileOptions);
+
+   if (result.GetCompilationStatus() != shaderc_compilation_status_success)
+   {
+      return { false, {} };
+   }
+
+   return { true, { result.begin(), result.end() } };
 }

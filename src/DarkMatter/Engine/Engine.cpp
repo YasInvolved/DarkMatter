@@ -1,8 +1,6 @@
 #include <DarkMatter/Engine/Engine.h>
 #include <DarkMatter/Renderer/RendererBuilder.h>
 
-#include <DarkMatter/Embedded/basic_glsl_vert_glsl.h>
-
 using Engine = DarkMatter::Engine;
 
 Engine::Engine()
@@ -42,8 +40,6 @@ bool Engine::initialize()
    
    if (!m_renderer->Init())
       return false;
-
-   m_loggerManager->getSystemLogger().info("Embedded resource length: {}", Embedded::basic_glsl_vert_glsl_len);
 
    return m_game->onInitialize(*this);
 }

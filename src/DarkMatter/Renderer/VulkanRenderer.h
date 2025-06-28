@@ -5,6 +5,7 @@
 #include <DarkMatter/Renderer/IRenderer.h>
 #include <DarkMatter/Renderer/VulkanPhysicalDevice.h>
 #include <DarkMatter/Renderer/VulkanLogicalDevice.h>
+#include <shaderc/shaderc.hpp>
 
 namespace DarkMatter
 {
@@ -34,6 +35,16 @@ namespace DarkMatter
       VkCommandBuffer m_commandBuffer = VK_NULL_HANDLE;
       gtl::vector<VulkanPhysicalDevice> m_availableDevices;
       std::unique_ptr<VulkanLogicalDevice> m_device;
+
+      shaderc::Compiler m_shaderCompiler;
+
+      struct ShaderCompileResult
+      {
+         bool result;
+         gtl::vector<uint32_t> data;
+      };
+
+      ShaderCompileResult compileGLSL(const std::string& source, shaderc_shader_kind kind);
    };
 }
 
