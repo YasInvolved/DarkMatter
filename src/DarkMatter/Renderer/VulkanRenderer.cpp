@@ -10,6 +10,23 @@ VulkanRenderer::VulkanRenderer(const Engine& engine, const std::string_view game
 
 bool VulkanRenderer::Init()
 {
+   auto& logger = m_engine.getLoggerManager().getLoggerByName("renderer");
+   auto& threadPool = m_engine.getThreadPool();
+
+   auto vertResult = threadPool.enqueue([this]()
+      {
+         std::string vertSource(Embedded::basic_vert_glsl, Embedded::basic_vert_glsl + Embedded::basic_vert_glsl_len);
+         return compileGLSL(vertSource, shaderc_glsl_default_vertex_shader);
+      }
+   );
+
+   auto fragResult = threadPool.enqueue([this]()
+      {
+         std::string fragSource(Embedded::basic_frag_glsl, Embedded::basic_frag_glsl + Embedded::basic_frag_glsl_len);
+         return compileGLSL(fragSource, shaderc_glsl_default_fragment_shader);
+      }
+   );
+
    VkResult result = volkInitialize();
    if (result != VK_SUCCESS)
       return false;
@@ -131,27 +148,10 @@ bool VulkanRenderer::Init()
 
    if (vkAllocateCommandBuffers(*m_device, &commandBufferAllocateInfo, &m_commandBuffer) != VK_SUCCESS)
       return false;
+   
+   auto pipelineBuildResult = threadPool.enqueue([this, &vertResult, &fragResult] { return buildBasicGraphicsPipeline(vertResult.get().data, fragResult.get().data); });
 
-   // TODO: parallel shaders compilation, it takes some time to compile them
-   auto& logger = m_engine.getLoggerManager().getLoggerByName("renderer");
-   auto& threadPool = m_engine.getThreadPool();
-
-   auto compileVertexShader = [this]()
-      {
-         std::string vertSource(Embedded::basic_vert_glsl, Embedded::basic_vert_glsl + Embedded::basic_vert_glsl_len);
-         return compileGLSL(vertSource, shaderc_glsl_default_vertex_shader);
-      };
-
-   auto compileFragmentShader = [this]()
-      {
-
-         std::string fragSource(Embedded::basic_frag_glsl, Embedded::basic_frag_glsl + Embedded::basic_frag_glsl_len);
-         return compileGLSL(fragSource, shaderc_glsl_default_fragment_shader);
-      };
-
-   auto vertResult = threadPool.enqueue(compileVertexShader);
-   auto fragResult = threadPool.enqueue(compileFragmentShader);
-
+   pipelineBuildResult.wait();
    return true;
 }
 
@@ -196,4 +196,9 @@ VulkanRenderer::ShaderCompileResult VulkanRenderer::compileGLSL(const std::strin
    }
 
    return { true, { result.begin(), result.end() } };
+}
+
+bool VulkanRenderer::buildBasicGraphicsPipeline(const gtl::vector<uint32_t>& vertShader, const gtl::vector<uint32_t>& fragShader)
+{
+   return true;
 }

@@ -24,12 +24,6 @@ namespace DarkMatter
 
       // void DrawMesh() override;
 
-      struct ShaderCompileResult
-      {
-         bool result;
-         gtl::vector<uint32_t> data;
-      };
-
    private:
       const std::string m_gameName;
       const Engine& m_engine;
@@ -42,9 +36,17 @@ namespace DarkMatter
       gtl::vector<VulkanPhysicalDevice> m_availableDevices;
       std::unique_ptr<VulkanLogicalDevice> m_device;
 
+      struct ShaderCompileResult
+      {
+         bool result;
+         gtl::vector<uint32_t> data;
+      };
+
       shaderc::Compiler m_shaderCompiler;
 
       ShaderCompileResult compileGLSL(const std::string& source, shaderc_shader_kind kind);
+
+      bool buildBasicGraphicsPipeline(const gtl::vector<uint32_t>& vertShader, const gtl::vector<uint32_t>& fragShader);
    };
 }
 
