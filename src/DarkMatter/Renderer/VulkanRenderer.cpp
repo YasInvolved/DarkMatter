@@ -151,8 +151,8 @@ bool VulkanRenderer::Init()
    
    auto pipelineBuildResult = threadPool.enqueue([this, &vertResult, &fragResult] { return buildBasicGraphicsPipeline(vertResult.get().data, fragResult.get().data); });
 
-   pipelineBuildResult.wait();
-   return true;
+   // TODO: pipeline building crashes for some reason
+   return pipelineBuildResult.get();
 }
 
 void VulkanRenderer::Shutdown()
@@ -198,7 +198,37 @@ VulkanRenderer::ShaderCompileResult VulkanRenderer::compileGLSL(const std::strin
    return { true, { result.begin(), result.end() } };
 }
 
-bool VulkanRenderer::buildBasicGraphicsPipeline(const gtl::vector<uint32_t>& vertShader, const gtl::vector<uint32_t>& fragShader)
+bool VulkanRenderer::buildBasicGraphicsPipeline(const gtl::vector<uint32_t>& vertShaderBinary, const gtl::vector<uint32_t>& fragShaderBinary)
 {
+   assert(m_device.get() != nullptr);
+
+   const VkShaderModuleCreateInfo vertShaderCreateInfo =
+   {
+      .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .codeSize = vertShaderBinary.size() * sizeof(uint32_t),
+      .pCode = vertShaderBinary.data(),
+   };
+
+   VkShaderModule vertShader;
+   if (!vkCreateShaderModule(*m_device, &vertShaderCreateInfo, nullptr, &vertShader))
+      return false;
+
+   const VkShaderModuleCreateInfo fragShaderCreateInfo =
+   {
+      .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .codeSize = fragShaderBinary.size() * sizeof(uint32_t),
+      .pCode = fragShaderBinary.data()
+   };
+
+   VkShaderModule fragShader;
+   if (!vkCreateShaderModule(*m_device, &fragShaderCreateInfo, nullptr, &fragShader))
+      return false;
+
+   vkDestroyShaderModule(*m_device, fragShader, nullptr);
+   vkDestroyShaderModule(*m_device, vertShader, nullptr);
    return true;
 }
