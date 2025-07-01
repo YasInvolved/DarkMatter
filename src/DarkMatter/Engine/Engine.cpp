@@ -5,8 +5,8 @@ using Engine = DarkMatter::Engine;
 
 Engine::Engine()
    : m_game(nullptr), 
-   m_window(nullptr), 
    m_loggerManager(std::make_unique<LoggerManager>()),
+   m_window(nullptr), 
    m_threadPool(std::make_unique<ThreadPool>(8))
 {}
 

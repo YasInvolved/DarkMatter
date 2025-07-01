@@ -10,12 +10,14 @@
             "name": "conf-vs-msvc",
             "displayName": "Visual Studio Generator, MSVC",
             "generator": "Visual Studio 17 2022",
+            "toolset": "v143",
             "binaryDir": "${sourceDir}/build/vs-msvc"
         },
         {
             "name": "conf-vs-clang",
             "displayName": "Visual Studio Generator, ClangCL",
             "generator": "Visual Studio 17 2022",
+            "toolset": "ClangCL",
             "binaryDir": "${sourceDir}/build/vs-clang"
         },
         {

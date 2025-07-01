@@ -15,14 +15,14 @@ bool VulkanRenderer::Init()
 
    auto vertResult = threadPool.enqueue([this]()
       {
-         std::string vertSource(Embedded::basic_vert_glsl, Embedded::basic_vert_glsl + Embedded::basic_vert_glsl_len);
+         std::string vertSource(EmbeddedResources::basic_vert_glsl, EmbeddedResources::basic_vert_glsl + EmbeddedResources::basic_vert_glsl_size);
          return compileGLSL(vertSource, shaderc_glsl_default_vertex_shader);
       }
    );
 
    auto fragResult = threadPool.enqueue([this]()
       {
-         std::string fragSource(Embedded::basic_frag_glsl, Embedded::basic_frag_glsl + Embedded::basic_frag_glsl_len);
+         std::string fragSource(EmbeddedResources::basic_frag_glsl, EmbeddedResources::basic_frag_glsl + EmbeddedResources::basic_frag_glsl_size);
          return compileGLSL(fragSource, shaderc_glsl_default_fragment_shader);
       }
    );

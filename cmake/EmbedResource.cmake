@@ -1,34 +1,59 @@
 # function that embeds a resource
 
 set(DM_EMBEDDED_RESOURCES_BASE_DIR "${DM_BUILD_PATH}/embedded")
-set(DM_EMBED_RESOURCE_SCRIPT "${DM_ROOT_PATH}/scripts/EmbedResource.py")
+set(DM_EMBED_RESOURCES_SCRIPT "${DM_ROOT_PATH}/scripts/EmbedResources.py")
+set(DM_RESOURCE_CONFIGURABLE_HEADER "${DM_ROOT_PATH}/cmake/EmbeddedResource.h.inl")
+
+set(DM_ENTRY_TEMPLATE
+	"{
+		\"absolute_path\": \"@RESOURCE_ABSOLUTE_PATH@\"
+	}"
+)
 
 function(dm_embed_resource TARGET RESOURCE_FILE)
-	get_filename_component(FILENAME ${RESOURCE_FILE} NAME)
-	get_filename_component(FILE_ABSOLUTE ${RESOURCE_FILE} ABSOLUTE)
-	string(REPLACE "." "_" VAR_NAME ${FILENAME})
+	get_filename_component(RESOURCE_FILENAME ${RESOURCE_FILE} NAME)
+	get_filename_component(RESOURCE_ABSOLUTE_PATH ${RESOURCE_FILE} ABSOLUTE)
 
-	set(EMBED_DIR "${DM_EMBEDDED_RESOURCES_BASE_DIR}/${TARGET}/Embedded")
+	string(REPLACE "." "_" VAR_NAME ${RESOURCE_FILENAME})
 
-	set(OUT_BASE "${EMBED_DIR}/${VAR_NAME}")
-	set(OUT_CPP "${OUT_BASE}.cpp")
-	set(OUT_H "${OUT_BASE}.h")
+	set(TARGET_INCLUDE_DIR_BASE "${DM_EMBEDDED_RESOURCES_BASE_DIR}/${TARGET}_IncludeDir")
+	set(TARGET_INCLUDE_DIR_WITH_NS "${TARGET_INCLUDE_DIR_BASE}/DarkMatter/Embedded")
+	set(TARGET_RESOURCES_FILE "${DM_EMBEDDED_RESOURCES_BASE_DIR}/${TARGET}.json")
+	set(TARGET_HEADER "${TARGET_INCLUDE_DIR_WITH_NS}/${VAR_NAME}.h")
+	set(TARGET_BUILTINS_SOURCE "${DM_EMBEDDED_RESOURCES_BASE_DIR}/build/${TARGET}_EmbeddedResources.cpp")
 
-	add_custom_command(
-		OUTPUT ${OUT_CPP}
-		COMMAND ${Python3_EXECUTABLE} ${DM_EMBED_RESOURCE_SCRIPT} ${FILE_ABSOLUTE} ${OUT_CPP} ${VAR_NAME}
-		DEPENDS ${RESOURCE_FILE} ${DM_EMBED_RESOURCE_SCRIPT}
-		COMMENT "Embedding resource ${FILE_ABSOLUTE}"
-	)
-
-	# generate header from template
-	set(VAR_NAME ${VAR_NAME})
+	set(VAR_NAME "${VAR_NAME}")
 	configure_file(
-		${CMAKE_SOURCE_DIR}/cmake/EmbeddedResource.h.inl
-		${OUT_H}
+		${DM_RESOURCE_CONFIGURABLE_HEADER}
+		${TARGET_HEADER}
 		@ONLY
 	)
 
-	target_sources(${TARGET} PRIVATE ${OUT_CPP})
-	target_include_directories(${TARGET} PRIVATE ${DM_EMBEDDED_RESOURCES_BASE_DIR})
+	if (NOT EXISTS "${TARGET_RESOURCES_FILE}")
+		message(STATUS "Resource data for ${TARGET} doesn't exist. Creating json.")
+		file(WRITE "${TARGET_RESOURCES_FILE}" "{}")
+	endif()
+
+	file(READ "${TARGET_RESOURCES_FILE}" TARGET_RESOURCES_FILE_DATA)
+
+	string(CONFIGURE "${DM_ENTRY_TEMPLATE}" ENTRY_JSON)
+	list(APPEND ENTRY_NAME "${VAR_NAME}") # has to be a list :(
+	string(JSON TARGET_RESOURCES_FILE_DATA SET "${TARGET_RESOURCES_FILE_DATA}" ${ENTRY_NAME} "${ENTRY_JSON}")
+
+	file(WRITE "${TARGET_RESOURCES_FILE}" "${TARGET_RESOURCES_FILE_DATA}")
+
+	get_target_property(TARGET_SOURCES ${TARGET} SOURCES)
+	list(FIND TARGET_SOURCES "${TARGET_BUILTINS_SOURCE}" INDEX)
+	
+	if (INDEX EQUAL -1)
+		add_custom_command(
+			OUTPUT ${TARGET_BUILTINS_SOURCE}
+			COMMAND ${Python3_EXECUTABLE} ${DM_EMBED_RESOURCES_SCRIPT} ${TARGET_BUILTINS_SOURCE} ${TARGET_RESOURCES_FILE}
+			DEPENDS ${Python3_EXECUTABLE} ${DM_EMBED_RESOURCES_SCRIPT} ${RESOURCE_ABSOLUTE_PATH}
+			COMMENT "Generating builtin resources for target: ${TARGET}"
+		)
+
+		target_sources(${TARGET} PRIVATE ${TARGET_BUILTINS_SOURCE})
+		target_include_directories(${TARGET} PRIVATE ${TARGET_INCLUDE_DIR_BASE})
+	endif()
 endfunction()
