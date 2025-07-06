@@ -13,20 +13,6 @@ bool VulkanRenderer::Init()
    auto& logger = m_engine.getLoggerManager().getLoggerByName("renderer");
    auto& threadPool = m_engine.getThreadPool();
 
-   auto vertResult = threadPool.enqueue([this]()
-      {
-         std::string vertSource(Embedded::basic_vert_glsl, Embedded::basic_vert_glsl + Embedded::basic_vert_glsl_len);
-         return compileGLSL(vertSource, shaderc_glsl_default_vertex_shader);
-      }
-   );
-
-   auto fragResult = threadPool.enqueue([this]()
-      {
-         std::string fragSource(Embedded::basic_frag_glsl, Embedded::basic_frag_glsl + Embedded::basic_frag_glsl_len);
-         return compileGLSL(fragSource, shaderc_glsl_default_fragment_shader);
-      }
-   );
-
    VkResult result = volkInitialize();
    if (result != VK_SUCCESS)
       return false;
@@ -149,10 +135,7 @@ bool VulkanRenderer::Init()
    if (vkAllocateCommandBuffers(*m_device, &commandBufferAllocateInfo, &m_commandBuffer) != VK_SUCCESS)
       return false;
    
-   auto pipelineBuildResult = threadPool.enqueue([this, &vertResult, &fragResult] { return buildBasicGraphicsPipeline(vertResult.get().data, fragResult.get().data); });
-
-   // TODO: pipeline building crashes for some reason
-   return pipelineBuildResult.get();
+   return true;
 }
 
 void VulkanRenderer::Shutdown()

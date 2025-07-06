@@ -32,7 +32,9 @@ void Window::handleEvents()
       // TODO: Event Translation
       DarkMatter::Events::Event event;
       bool recognized = TranslateSDLEvent(sdlEvent, event);
-      m_callback(event);
+      
+      if (recognized) 
+         m_callback(event);
    }
 }
 
