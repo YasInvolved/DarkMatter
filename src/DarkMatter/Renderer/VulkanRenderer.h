@@ -5,6 +5,7 @@
 #include <DarkMatter/Renderer/IRenderer.h>
 #include <DarkMatter/Renderer/VulkanPhysicalDevice.h>
 #include <DarkMatter/Renderer/VulkanLogicalDevice.h>
+#include <DarkMatter/Renderer/VulkanCommandPool.h>
 #include <shaderc/shaderc.hpp>
 
 namespace DarkMatter
@@ -12,6 +13,8 @@ namespace DarkMatter
    class VulkanRenderer : public IRenderer
    {
    public:
+      static constexpr const char s_loggerName[] = "VulkanRenderer";
+
       VulkanRenderer(const Engine& engine, std::string_view gameName);
 
       bool Init() override;
@@ -31,10 +34,9 @@ namespace DarkMatter
       VkInstance m_instance = VK_NULL_HANDLE;
       VkSurfaceKHR m_surface = VK_NULL_HANDLE;
       VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
-      VkCommandPool m_commandPool = VK_NULL_HANDLE;
-      VkCommandBuffer m_commandBuffer = VK_NULL_HANDLE;
       gtl::vector<VulkanPhysicalDevice> m_availableDevices;
       std::unique_ptr<VulkanLogicalDevice> m_device;
+      std::unique_ptr<VulkanCommandPool> m_commandPool;
 
       struct ShaderCompileResult
       {
