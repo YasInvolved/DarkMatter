@@ -1,5 +1,7 @@
 # function that embeds a resource
 
+find_package(Python3 COMPONENTS Interpreter)
+
 set(DM_EMBEDDED_RESOURCES_BASE_DIR "${DM_BUILD_PATH}/embedded")
 set(DM_EMBED_RESOURCE_SCRIPT "${DM_ROOT_PATH}/scripts/EmbedResource.py")
 

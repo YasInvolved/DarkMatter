@@ -12,7 +12,11 @@ LoggerManager::LoggerManager()
    m_fileSink->set_level(spdlog::level::trace);
 
    m_consoleSink->set_pattern("%^" + std::string(s_loggerPattern) + "%$");
-   m_consoleSink->set_level(spdlog::level::warn); // TODO: level dependent on build mode (Debug, Release...)
+#ifdef DM_DEBUG
+   m_consoleSink->set_level(spdlog::level::trace);
+#else
+   m_consoleSink->set_level(spdlog::level::warn);
+#endif
 
    m_systemLogger = std::make_unique<spdlog::logger>("system", spdlog::sinks_init_list{ m_fileSink, m_consoleSink });
 }

@@ -32,7 +32,7 @@ bool VulkanRenderer::Init()
    SDL_Vulkan_GetInstanceExtensions(&count);
 
    static constexpr const char* usedLayers[] = { 
-#ifndef _NDEBUG
+#ifdef DM_DEBUG
       "VK_LAYER_KHRONOS_validation" 
 #endif
    };

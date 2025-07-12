@@ -1,10 +1,10 @@
 {
-    "version": 9,
-    "cmakeMinimumRequired": {
-        "major": 3,
-        "minor": 31,
-        "patch": 0
-    },
+  "version": 9,
+  "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 31,
+      "patch": 0
+  },
   "configurePresets": [
     {
       "name": "conf-windows-only",
@@ -19,7 +19,7 @@
       "name": "conf-ninja-clangcl",
       "displayName": "Ninja generator, ClangCL",
       "inherits": "conf-windows-only",
-      "generator": "Ninja",
+      "generator": "Ninja Multi-Config",
       "binaryDir": "${sourceDir}/build/ninja-clang",
       "cacheVariables": {
         "CMAKE_LINKER": "lld-link",
@@ -31,7 +31,7 @@
       "name": "conf-ninja-msvc",
       "displayName": "Ninja generator, MSVC",
       "inherits": "conf-windows-only",
-      "generator": "Ninja",
+      "generator": "Ninja Multi-Config",
       "binaryDir": "${sourceDir}/build/ninja-msvc",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl",
@@ -41,8 +41,67 @@
     {
       "name": "conf-ninja-auto",
       "displayName": "Ninja generator, automatic toolset",
-      "generator": "Ninja",
+      "generator": "Ninja Multi-Config",
       "binaryDir": "${sourceDir}/build/ninja-auto"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-debug",
+      "hidden": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "build-rwdi",
+      "hidden": true,
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "build-release",
+      "hidden": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "build-ninja-clangcl-debug",
+      "displayName": "[BUILD-DEBUG] Ninja generator, ClangCL",
+      "configurePreset": "conf-ninja-clangcl",
+      "inheritConfigureEnvironment": true,
+      "inherits": "build-debug"
+    },
+    {
+      "name": "build-ninja-clangcl-rwdi",
+      "displayName": "[BUILD-RWDI] Ninja generator, ClangCL",
+      "configurePreset": "conf-ninja-clangcl",
+      "inheritConfigureEnvironment": true,
+      "inherits": "build-rwdi"
+    },
+    {
+      "name": "build-ninja-clangcl-release",
+      "displayName": "[BUILD-RELEASE] Ninja generator, ClangCL",
+      "configurePreset": "conf-ninja-clangcl",
+      "inheritConfigureEnvironment": true,
+      "inherits": "build-release"
+    },
+    {
+      "name": "build-ninja-msvc-debug",
+      "displayName": "[BUILD-DEBUG] Ninja generator, MSVC",
+      "configurePreset": "conf-ninja-msvc",
+      "inheritConfigureEnvironment": true,
+      "inherits": "build-debug"
+    },
+    {
+      "name": "build-ninja-msvc-rwdi",
+      "displayName": "[BUILD-RWDI] Ninja generator, MSVC",
+      "configurePreset": "conf-ninja-msvc",
+      "inheritConfigureEnvironment": true,
+      "inherits": "build-rwdi"
+    },
+    {
+      "name": "build-ninja-msvc-release",
+      "displayName": "[BUILD-RELEASE] Ninja generator, MSVC",
+      "configurePreset": "conf-ninja-msvc",
+      "inheritConfigureEnvironment": true,
+      "inherits": "build-release"
     }
   ]
 }
