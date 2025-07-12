@@ -5,26 +5,44 @@
         "minor": 31,
         "patch": 0
     },
-    "configurePresets": [
-        {
-            "name": "conf-vs-msvc",
-            "displayName": "Visual Studio Generator, MSVC",
-            "generator": "Visual Studio 17 2022",
-            "toolset": "v143",
-            "binaryDir": "${sourceDir}/build/vs-msvc"
-        },
-        {
-            "name": "conf-vs-clang",
-            "displayName": "Visual Studio Generator, ClangCL",
-            "generator": "Visual Studio 17 2022",
-            "toolset": "ClangCL",
-            "binaryDir": "${sourceDir}/build/vs-clang"
-        },
-        {
-            "name": "conf-ninja",
-            "displayName": "Ninja Generator",
-            "generator": "Ninja Multi-Config",
-            "binaryDir": "${sourceDir}/build/ninja"
-        }
-    ]
+  "configurePresets": [
+    {
+      "name": "conf-windows-only",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "conf-ninja-clangcl",
+      "displayName": "Ninja generator, ClangCL",
+      "inherits": "conf-windows-only",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja-clang",
+      "cacheVariables": {
+        "CMAKE_LINKER": "lld-link",
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl"
+      }
+    },
+    {
+      "name": "conf-ninja-msvc",
+      "displayName": "Ninja generator, MSVC",
+      "inherits": "conf-windows-only",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja-msvc",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl"
+      }
+    },
+    {
+      "name": "conf-ninja-auto",
+      "displayName": "Ninja generator, automatic toolset",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja-auto"
+    }
+  ]
 }
