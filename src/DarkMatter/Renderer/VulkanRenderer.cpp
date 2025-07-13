@@ -13,6 +13,30 @@ bool VulkanRenderer::Init()
    auto& logger = m_engine.getLoggerManager().getLoggerByName(s_loggerName);
    auto& threadPool = m_engine.getThreadPool();
 
+   auto vertexShaderCompileFuture = threadPool.enqueue([this, &logger]()
+      {
+         std::string shaderCode(Embedded::basic_vert_glsl, Embedded::basic_vert_glsl + Embedded::basic_vert_glsl_len);
+
+         auto result = compileGLSL("basic.vert.glsl", shaderCode, shaderc_shader_kind::shaderc_glsl_vertex_shader);
+         if (!result.result)
+            throw std::runtime_error("Failed to compile vertex shader");
+
+         return result.data;
+      }
+   );
+
+   auto fragmentShaderCompileFuture = threadPool.enqueue([this, &logger]()
+      {
+         std::string shaderCode(Embedded::basic_frag_glsl, Embedded::basic_frag_glsl + Embedded::basic_frag_glsl_len);
+         auto result = compileGLSL("basic.frag.glsl", shaderCode, shaderc_shader_kind::shaderc_glsl_fragment_shader);
+
+         if (!result.result)
+            throw std::runtime_error("Failed to compile fragment shader");
+
+         return result.data;
+      }
+   );
+
    VkResult result = volkInitialize();
    if (result != VK_SUCCESS)
       return false;
@@ -113,8 +137,8 @@ bool VulkanRenderer::Init()
       return false;
 
    m_commandPool = std::make_unique<VulkanCommandPool>(*m_device, m_device->getPhysicalDevice().getQueueFamilies().graphics.value());
-   
-   return true;
+
+   return buildBasicGraphicsPipeline(vertexShaderCompileFuture.get(), fragmentShaderCompileFuture.get());
 }
 
 void VulkanRenderer::Shutdown()
@@ -143,25 +167,32 @@ void VulkanRenderer::Resize(uint32_t w, uint32_t h)
 
 }
 
-VulkanRenderer::ShaderCompileResult VulkanRenderer::compileGLSL(const std::string& source, shaderc_shader_kind kind)
+VulkanRenderer::ShaderCompileResult VulkanRenderer::compileGLSL(const std::string_view filename, const std::string& source, shaderc_shader_kind kind)
 {
    static shaderc::Compiler s_shaderCompiler;
    static shaderc::CompileOptions s_compileOptions;
+   static auto& s_logger = m_engine.getLoggerManager().getLoggerByName(s_loggerName);
    s_compileOptions.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
 
-   auto result = s_shaderCompiler.CompileGlslToSpv(source, kind, "basic.vert.glsl", s_compileOptions);
+   auto result = s_shaderCompiler.CompileGlslToSpv(source, kind, filename.data(), s_compileOptions);
 
    if (result.GetCompilationStatus() != shaderc_compilation_status_success)
    {
+      s_logger.error("Failed to compile {}: {}", filename, result.GetErrorMessage());
       return { false, {} };
    }
 
+   s_logger.info("{} compiled successfully!", filename);
    return { true, { result.begin(), result.end() } };
 }
 
 bool VulkanRenderer::buildBasicGraphicsPipeline(const gtl::vector<uint32_t>& vertShaderBinary, const gtl::vector<uint32_t>& fragShaderBinary)
 {
+   static auto& s_logger = m_engine.getLoggerManager().getLoggerByName(s_loggerName);
    assert(m_device.get() != nullptr);
+
+   s_logger.info("Vertex shader size: {}", vertShaderBinary.size());
+   s_logger.info("Fragment shader size: {}", fragShaderBinary.size());
 
    const VkShaderModuleCreateInfo vertShaderCreateInfo =
    {

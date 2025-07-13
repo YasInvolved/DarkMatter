@@ -46,7 +46,7 @@ namespace DarkMatter
 
       shaderc::Compiler m_shaderCompiler;
 
-      ShaderCompileResult compileGLSL(const std::string& source, shaderc_shader_kind kind);
+      ShaderCompileResult compileGLSL(const std::string_view filename, const std::string& source, shaderc_shader_kind kind);
 
       bool buildBasicGraphicsPipeline(const gtl::vector<uint32_t>& vertShaderBinary, const gtl::vector<uint32_t>& fragShaderBinary);
    };
