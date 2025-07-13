@@ -32,6 +32,7 @@ namespace DarkMatter
       const Engine& m_engine;
 
       VkInstance m_instance = VK_NULL_HANDLE;
+      VkDebugUtilsMessengerEXT m_debugMessenger = VK_NULL_HANDLE;
       VkSurfaceKHR m_surface = VK_NULL_HANDLE;
       VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
       gtl::vector<VulkanPhysicalDevice> m_availableDevices;
@@ -49,6 +50,12 @@ namespace DarkMatter
       ShaderCompileResult compileGLSL(const std::string_view filename, const std::string& source, shaderc_shader_kind kind);
 
       bool buildBasicGraphicsPipeline(const gtl::vector<uint32_t>& vertShaderBinary, const gtl::vector<uint32_t>& fragShaderBinary);
+
+      static VkBool32 VulkanDebugMessengerCallback(
+         VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
+         VkDebugUtilsMessageTypeFlagsEXT message_type,
+         const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
+         void* user_data);
    };
 }
 

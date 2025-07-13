@@ -4,6 +4,31 @@
 
 using VulkanRenderer = DarkMatter::VulkanRenderer;
 
+VkBool32 VulkanRenderer::VulkanDebugMessengerCallback(
+   VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
+   VkDebugUtilsMessageTypeFlagsEXT message_type,
+   const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
+   void* user_data)
+{
+   VulkanRenderer* rendererInstance = reinterpret_cast<VulkanRenderer*>(user_data);
+   static auto& logger = rendererInstance->m_engine.getLoggerManager().getLoggerByName("ValidationLayer");
+
+   switch (message_severity)
+   {
+   case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+      logger.warn("{}", callback_data->pMessage);
+      break;
+   case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+      logger.error("{}", callback_data->pMessage);
+      break;
+   default:
+      logger.info("{}", callback_data->pMessage);
+      break;
+   }
+
+   return VK_FALSE;
+}
+
 VulkanRenderer::VulkanRenderer(const Engine& engine, const std::string_view gameName)
    : m_gameName(gameName), m_engine(engine)
 { }
@@ -37,6 +62,24 @@ bool VulkanRenderer::Init()
       }
    );
 
+#ifdef DM_DEBUG
+   const VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo =
+   {
+      .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+      .flags = 0,
+      .pNext = nullptr,
+      .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT | 
+         VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | 
+         VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | 
+         VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT,
+      .messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+         VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT |
+         VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
+      .pfnUserCallback = VulkanDebugMessengerCallback,
+      .pUserData = this,
+   };
+#endif
+
    VkResult result = volkInitialize();
    if (result != VK_SUCCESS)
       return false;
@@ -54,10 +97,15 @@ bool VulkanRenderer::Init()
 
    uint32_t count;
    SDL_Vulkan_GetInstanceExtensions(&count);
+   gtl::vector<const char*> usedExtensions(SDL_Vulkan_GetInstanceExtensions(&count), SDL_Vulkan_GetInstanceExtensions(&count) + count);
+   
+#ifdef DM_DEBUG
+   usedExtensions.emplace_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#endif
 
    static constexpr const char* usedLayers[] = { 
 #ifdef DM_DEBUG
-      "VK_LAYER_KHRONOS_validation" 
+      "VK_LAYER_KHRONOS_validation"
 #endif
    };
 
@@ -65,13 +113,17 @@ bool VulkanRenderer::Init()
    const VkInstanceCreateInfo instanceCreateInfo =
    {
       .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+      #ifdef DM_DEBUG
+      .pNext = &debugMessengerCreateInfo,
+#else
       .pNext = nullptr,
+#endif
       .flags = 0,
       .pApplicationInfo = &applicationInfo,
       .enabledLayerCount = sizeof(usedLayers) / sizeof(const char*),
       .ppEnabledLayerNames = usedLayers,
-      .enabledExtensionCount = count,
-      .ppEnabledExtensionNames = SDL_Vulkan_GetInstanceExtensions(&count),
+      .enabledExtensionCount = static_cast<uint32_t>(usedExtensions.size()),
+      .ppEnabledExtensionNames = usedExtensions.data(),
    };
 
    result = vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance);
@@ -149,6 +201,9 @@ void VulkanRenderer::Shutdown()
    vkDestroySwapchainKHR(*m_device, m_swapchain, nullptr);
    m_device.reset();
    SDL_Vulkan_DestroySurface(m_instance, m_surface, nullptr);
+#ifdef DM_DEBUG
+   vkDestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
+#endif
    vkDestroyInstance(m_instance, nullptr);
 }
 
@@ -204,7 +259,7 @@ bool VulkanRenderer::buildBasicGraphicsPipeline(const gtl::vector<uint32_t>& ver
    };
 
    VkShaderModule vertShader;
-   if (!vkCreateShaderModule(*m_device, &vertShaderCreateInfo, nullptr, &vertShader))
+   if (vkCreateShaderModule(*m_device, &vertShaderCreateInfo, nullptr, &vertShader) != VK_SUCCESS) 
       return false;
 
    const VkShaderModuleCreateInfo fragShaderCreateInfo =
@@ -217,7 +272,7 @@ bool VulkanRenderer::buildBasicGraphicsPipeline(const gtl::vector<uint32_t>& ver
    };
 
    VkShaderModule fragShader;
-   if (!vkCreateShaderModule(*m_device, &fragShaderCreateInfo, nullptr, &fragShader))
+   if (vkCreateShaderModule(*m_device, &fragShaderCreateInfo, nullptr, &fragShader) != VK_SUCCESS)
       return false;
 
    vkDestroyShaderModule(*m_device, fragShader, nullptr);
